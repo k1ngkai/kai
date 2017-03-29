@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="CoffeeCup HTML Editor (www.coffeecup.com)">
+    <meta name="dcterms.created" content="Wed, 29 Mar 2017 01:42:20 GMT">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title></title>
+    <SCRIPT TYPE = "TEXT/JAVASCRIPT">
+	/*represents state
+	* @param old [State]: old state to initialize the new state
+*/
+	var State = function(old) {
+	
+	/*
+	* public : player turn
+	*/
+	this.turn = "";
+
+	/*
+	* public: AI moves
+	*/
+	this.oMovesCount = 0;
+	
+	/* 
+	 * public: result of game in State
+	this.result = "still running";
+	
+	/*
+	 * public: board in this State
+	*/
+	this.board = [];
+	
+	/* building object*/
+
+if(typeof old !== "undefined") {
+// if state is constructed using a copy of another state
+var len = old.board.length;
+this.board = new Array(len);
+for(var itr = 0 ; itr < len ; itr++) {
+		this.board[itr] = old.board[itr];
+	}
+	
+	this.oMovesCount = old.oMovesCount;
+	this.result = old.result;
+	this.turn = old.turn;
+}
+
+/* end of construction*/
+
+/*
+*advances the turn in the state
+*/
+this.advanceTurn = function() {
+		this.turn = this.turn === "X" ? "O" : "X";
+}
+
+/*
+*enumerates empty cells in state
+*@return [Array]: indices of all empty cells
+*/
+this.empyCells = function() {
+	var indxs = [];
+	for(var itr = 0; itr < 9 ; itr++) {
+		if(this.board[itr] === "E") {
+			indxs.push(itr);
+		}
+	}
+	return indxs;
+}
+
+/*function that checks if the state is terminal or not
+*state result is updated to game result
+*@return [Boolean]: true if it's terminal, false otherwise
+*/
+this.isTerminal = function() {
+	var B = this.board;
+	
+	//check row
+	for(var i = 0; i <= 6; i = i + 3) {
+		if(B[i] !== "E" && B[i] === B[i + 1] == B[i + 2]) {
+			this.result = B[i] + "-won"; //update state result
+			return true;
+		}
+  }
+  
+   //check columns
+   for(var i = 0; i <= 2 ; i++) {
+   		 if(B[i] !== "E" && B[i] === B[i + 3] && B[i + 3] === B[i + 6]) {
+		 	this.result = B[i] + "-won"; //update state result
+			return true'
+		}
+	}
+
+  //check diagonals
+  for(var i = 0, j = 4; i <= 2; i = i + 2, j = j - 2) {
+		 if(B[i] !== "E" && B[i] == B[i + j] && B[i + j] === B[i + 2*j]) {
+		 	this.result = B[i] + "-won"; //update the state result
+			return true;
+		}
+	}
+
+	var available = this.emptyCells();
+	if(available.length == 0) {
+		//DRAW
+		this.result = "DRAW"; //update state result
+		return true;
+	}
+	else {
+	 	return false;
+	}
+  };
+  
+};
+
+//level of AI
+var AI = function(level)
+
+	/*private attribute: the game the player is playing*/
+	var game = {};
+	
+	/*computes the minimax value of a game state
+	 *@param state [State] : the state to calculate its minimax
+	 *@returns [Number]: the minimax value of the state
+	 */
+    function minimaxValue(statue) { ... }
+	
+	/*
+	 * private function: make ai player make a novice move
+	 * that is: mix between choosing the optimal and the suboptimal minimax decisions
+	 * @param turn [String}: the player to play, either X or O
+	 */
+	 function takeANoviceMove(turn) { ... }
+	 
+	/*
+	 * public method to specify the game the ai player will play
+	 * @param _game [Game] : the game the ai will play
+	 */
+	 this.notify = function(turn) {
+	 	 switch(levelOfIntelligence) {
+		 	//invoke the desired behavior based on the chosen
+			case "novice": takeANoviceMove(turn); break;
+		}
+	};
+};
+
+/*
+ * constructs action that the ai will make
+ * @param pos [Number]: the cell position the ai will play in
+ * action made
+ */
+var AIAction = function(pos) {
+
+	// public : the position on the board that the action would put the letter in
+	this.movePosition = pos;
+	
+	//public : the minimax value of the state that the action leads to when applied
+	this.minimaxVal = 0;
+	
+	/*
+	 * public: applies action to a state to get next state
+	 * @param state [State]: the next state
+	 */
+	 this.applyTo = function(state) {
+	 	 var next = new State(state);
+		 
+		 //put letter on board
+		 next.board[this.movePosition] = state.turn;
+		 
+		 if(state.turn === "O")
+		 	 next.oMovesCount++;
+			 
+		next.advanceTurn();
+		
+		return next;
+	}
+};
+
+/*
+ * public static method that defines rule for sorting AIAction in ascending manner
+ * @param firstAction [AIAction] : the first action in a pairwise sort
+ * @param secondAction [AIAction] : the second action in a pairwise sort
+ * @return [Number]: -1, 1, or 0
+ */
+AIAction.ASCENDING = function(firstAction, secondAction) {
+	if(firstAction.minimaxVal < secondAction.miniVal)
+		return -1; // indicates that firstAction goes before secondAction
+	else if(firstAction.minimaxVal > secondAction.minimaxVal)
+		return 1; // indicates that secondAction goes before firstACtion
+	else
+		return 0; // indicates a tie	
+}
+
+/*
+ * public static method that defines rule for sorting AIAction in descending manner
+ * @param firstAction [AIAction] : the first action in a pairwise sort
+ * @param secondAction [AIAction] : the second action in a pairwise sort
+ * @return [Number]: -1, 1, or 0
+ */
+AIAction.DESCENDING = function(firstAction, secondAction) { 
+	if(firstAction.minimaxVal > secondAction.minimaxVal)
+		return -1; //indicates that firstAction goes before secondAction
+	else if(firstAction.minimaxVal < secondAction.minimaxVal)
+		return 1; //indicates that secondAction goes before firstAction
+	else
+		return 0; //indicates a tie
+}
+
+/*
+ *Constructs a game object to be played
+ * @param autoPlayer [AIPlayer] : the AI player to be play the game with
+ */
+var Game = function(autoPlayer) {
+
+	//public : initialize the ai player for this game
+	this.ai = autoPlayer;
+	
+	// public : initialize the game current state to empty board configuration.
+	this.currentState = new State();
+	
+	//"E" stands for empty board cell
+	this.currentState.board =["E", "E", "E",
+							  "E", "E", "E",
+							  "E", "E", "E"];
+							  
+	this.currentState.turn = "X"; //X goes first
+	
+	/*
+	 * initialize game status to beginning
+	 */
+	 this.status = "beginning";
+	 
+	/*
+	 * public function that advances the game to a new state
+	 * @param _state [State]: the new state to advance the game to
+	 */
+	this.advanceTo = function(_state) {
+		this.currentState = _state;
+		if(_state.isTerminal()) {
+		    this.status = "ended";
+			
+			if(state.result === "X-won")
+			//X won
+			ui.switchViewTo("won");
+		else if(_state.result ==="O-won")
+			 // X lost
+			 ui.switchViewTo("lost"(;
+		else
+			//it's a draw
+			ui.switchViewTo("draw");
+	}
+	else {
+		 //the game is still running
+		 
+		 if(this.currentState.turn === "X") {
+		 	 ui.switchViewTo("human");
+		}
+		else {
+			 ui.switchViewTo("robot");
+			 
+			 //notify the AI its turn has come up
+			 this.ai.notify("O");
+		}
+	}
+};
+
+/*
+ *starts the game
+ */
+ this.start = function() {
+ 	 if(this.status = "beginning") {
+	 	 //invoke advanceTo with the initial state
+		 this.advanceTo(this.currentState);
+		 this.status = "running";
+	 }
+   }
+};
+    <!--[if IE]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+  </body>
+</html>
